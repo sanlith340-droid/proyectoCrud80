@@ -7,9 +7,17 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "express": "^5.2.1"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sanlith340-droid/proyectoCrud80.git"
+  },
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/sanlith340-droid/proyectoCrud80/issues"
+  },
+  "homepage": "https://github.com/sanlith340-droid/proyectoCrud80#readme"
 }
