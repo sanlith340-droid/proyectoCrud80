@@ -1,0 +1,26 @@
+[
+  {
+    "id": 1,
+    "nombre": "Laptop Lenovo",
+    "precio": 2500000,
+    "stock": 10,
+    "categoria": "Tecnologia",
+    "imagen": null
+  },
+  {
+    "id": 2,
+    "nombre": "Mouse Logitech",
+    "precio": 85000,
+    "stock": 25,
+    "categoria": "Accesorios",
+    "imagen": null
+  },
+  {
+    "id": 3,
+    "nombre": "Teclado Gamer",
+    "precio": 150000,
+    "stock": 15,
+    "categoria": "Accesorios",
+    "imagen": null
+  }
+]
