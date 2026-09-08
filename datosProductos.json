@@ -1,0 +1,10 @@
+[
+  {
+    "id": 1,
+    "nombre": "Hamburguesa",
+    "precio": 25000,
+    "stock": 16,
+    "categoria": "Comida",
+    "imagen": "/uploads/1788869122049-522131842.jpg"
+  }
+]

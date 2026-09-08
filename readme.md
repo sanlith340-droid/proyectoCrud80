@@ -33,3 +33,8 @@ PUT http://localhost:3030/api/productos/1
 }
 DELETE
 DELETE http://localhost:3030/api/productos/2
+
+
+## Libreria multer 
+
+npm install multer
