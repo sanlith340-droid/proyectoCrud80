@@ -22,5 +22,13 @@
     "stock": 15,
     "categoria": "Accesorios",
     "imagen": null
+  },
+  {
+    "id": 4,
+    "nombre": "Hamburguesa",
+    "precio": 25000,
+    "stock": 19,
+    "categoria": "Comida",
+    "imagen": "/uploads/1788871724241-704101341.jpg"
   }
 ]

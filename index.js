@@ -2,6 +2,8 @@ require("dotenv").config();
 
 const express = require("express");
 const fs = require("fs");
+const multer = require("multer");
+const path = require("path");
 
 const miApp = express();
 
@@ -11,6 +13,97 @@ const archivoProductos = "./datosProductos.json";
 
 // Middleware
 miApp.use(express.json());
+
+
+// =====================================================
+// MIDDLEWARE DE LOGGING (imprime la hora de cada petición)
+// =====================================================
+
+miApp.use((req, res, next) => {
+    console.log(`Tiempo en milisegundos: ${Date.now()}`);
+    next();
+});
+
+
+// =====================================================
+// CONFIGURACIÓN DE MULTER
+// =====================================================
+
+// Carpeta donde se guardarán las imágenes
+const carpetaUploads = "./uploads";
+
+// Crear la carpeta si no existe
+if (!fs.existsSync(carpetaUploads)) {
+    fs.mkdirSync(carpetaUploads);
+}
+
+// Configuración del almacenamiento
+const almacenamiento = multer.diskStorage({
+
+    destination: (req, file, cb) => {
+        cb(null, carpetaUploads);
+    },
+
+    filename: (req, file, cb) => {
+
+        const extension = path.extname(file.originalname);
+
+        const nombreArchivo =
+            Date.now() +
+            "-" +
+            Math.round(Math.random() * 1E9) +
+            extension;
+
+        cb(null, nombreArchivo);
+    }
+
+});
+
+// Configuración de Multer
+const upload = multer({
+
+    storage: almacenamiento,
+
+    fileFilter: (req, file, cb) => {
+
+        const tiposPermitidos = [
+            "image/jpeg",
+            "image/png",
+            "image/webp",
+            "image/gif"
+        ];
+
+        if (tiposPermitidos.includes(file.mimetype)) {
+
+            cb(null, true);
+
+        } else {
+
+            cb(
+                new Error(
+                    "Solo se permiten imágenes JPG, PNG, WEBP o GIF"
+                )
+            );
+
+        }
+
+    },
+
+    limits: {
+        fileSize: 5 * 1024 * 1024 // 5 MB
+    }
+
+});
+
+
+// =====================================================
+// MOSTRAR IMÁGENES (carpeta pública)
+// =====================================================
+
+miApp.use(
+    "/uploads",
+    express.static(path.resolve(carpetaUploads))
+);
 
 
 // =====================================================
@@ -113,7 +206,10 @@ miApp.get("/api/productos/:id", (req, res) => {
 // POST - CREAR PRODUCTO
 // =====================================================
 
-miApp.post("/api/productos", (req, res) => {
+miApp.post(
+    "/api/productos",
+    upload.single("imagen"),
+    (req, res) => {
 
     try {
 
@@ -129,13 +225,13 @@ miApp.post("/api/productos", (req, res) => {
 
         if (
             nombre === undefined ||
-            nombre === "" ||
+            nombre.trim() === "" ||
             precio === undefined ||
             precio === "" ||
             stock === undefined ||
             stock === "" ||
             categoria === undefined ||
-            categoria === ""
+            categoria.trim() === ""
         ) {
 
             return res.status(400).json({
@@ -145,11 +241,18 @@ miApp.post("/api/productos", (req, res) => {
         }
 
 
+        // Convertir precio y stock (llegan como texto desde form-data)
+
+        const precioNumero = Number(precio);
+
+        const stockNumero = Number(stock);
+
+
         // Validar precio
 
         if (
-            typeof precio !== "number" ||
-            precio <= 0
+            !Number.isFinite(precioNumero) ||
+            precioNumero <= 0
         ) {
 
             return res.status(400).json({
@@ -162,9 +265,8 @@ miApp.post("/api/productos", (req, res) => {
         // Validar stock
 
         if (
-            typeof stock !== "number" ||
-            stock < 0 ||
-            !Number.isInteger(stock)
+            !Number.isInteger(stockNumero) ||
+            stockNumero < 0
         ) {
 
             return res.status(400).json({
@@ -184,19 +286,30 @@ miApp.post("/api/productos", (req, res) => {
             : 1;
 
 
+        // Construir la ruta de la imagen, si se subió una
+
+        let imagen = null;
+
+        if (req.file) {
+
+            imagen = `/uploads/${req.file.filename}`;
+
+        }
+
+
         const nuevoProducto = {
 
             id: nuevoId,
 
-            nombre: nombre,
+            nombre: nombre.trim(),
 
-            precio: precio,
+            precio: precioNumero,
 
-            stock: stock,
+            stock: stockNumero,
 
-            categoria: categoria,
+            categoria: categoria.trim(),
 
-            imagen: null
+            imagen: imagen
 
         };
 
@@ -216,6 +329,8 @@ miApp.post("/api/productos", (req, res) => {
 
     } catch (error) {
 
+        console.error(error);
+
         res.status(500).json({
             mensaje: "Error al crear el producto"
         });
@@ -229,7 +344,10 @@ miApp.post("/api/productos", (req, res) => {
 // PUT - ACTUALIZAR PRODUCTO
 // =====================================================
 
-miApp.put("/api/productos/:id", (req, res) => {
+miApp.put(
+    "/api/productos/:id",
+    upload.single("imagen"),
+    (req, res) => {
 
     try {
 
@@ -241,55 +359,6 @@ miApp.put("/api/productos/:id", (req, res) => {
             stock,
             categoria
         } = req.body;
-
-
-        // Validar campos
-
-        if (
-            nombre === undefined ||
-            nombre === "" ||
-            precio === undefined ||
-            precio === "" ||
-            stock === undefined ||
-            stock === "" ||
-            categoria === undefined ||
-            categoria === ""
-        ) {
-
-            return res.status(400).json({
-                mensaje: "Nombre, precio, stock y categoria son obligatorios"
-            });
-
-        }
-
-
-        // Validar precio
-
-        if (
-            typeof precio !== "number" ||
-            precio <= 0
-        ) {
-
-            return res.status(400).json({
-                mensaje: "El precio debe ser un número mayor a 0"
-            });
-
-        }
-
-
-        // Validar stock
-
-        if (
-            typeof stock !== "number" ||
-            stock < 0 ||
-            !Number.isInteger(stock)
-        ) {
-
-            return res.status(400).json({
-                mensaje: "El stock debe ser un entero positivo o 0"
-            });
-
-        }
 
 
         const productos = leerProductos();
@@ -311,21 +380,90 @@ miApp.put("/api/productos/:id", (req, res) => {
         }
 
 
+        // Validar campos
+
+        if (
+            nombre === undefined ||
+            nombre.trim() === "" ||
+            precio === undefined ||
+            precio === "" ||
+            stock === undefined ||
+            stock === "" ||
+            categoria === undefined ||
+            categoria.trim() === ""
+        ) {
+
+            return res.status(400).json({
+                mensaje: "Nombre, precio, stock y categoria son obligatorios"
+            });
+
+        }
+
+
+        // Convertir precio y stock
+
+        const precioNumero = Number(precio);
+
+        const stockNumero = Number(stock);
+
+
+        // Validar precio
+
+        if (
+            !Number.isFinite(precioNumero) ||
+            precioNumero <= 0
+        ) {
+
+            return res.status(400).json({
+                mensaje: "El precio debe ser un número mayor a 0"
+            });
+
+        }
+
+
+        // Validar stock
+
+        if (
+            !Number.isInteger(stockNumero) ||
+            stockNumero < 0
+        ) {
+
+            return res.status(400).json({
+                mensaje: "El stock debe ser un entero positivo o 0"
+            });
+
+        }
+
+
+        // Mantener la imagen anterior por defecto
+
+        let imagen = productos[posicion].imagen || null;
+
+
+        // Si se subió una imagen nueva, reemplazarla
+
+        if (req.file) {
+
+            imagen = `/uploads/${req.file.filename}`;
+
+        }
+
+
         // Actualizar
 
         productos[posicion] = {
 
             id: id,
 
-            nombre: nombre,
+            nombre: nombre.trim(),
 
-            precio: precio,
+            precio: precioNumero,
 
-            stock: stock,
+            stock: stockNumero,
 
-            categoria: categoria,
+            categoria: categoria.trim(),
 
-            imagen: productos[posicion].imagen || null
+            imagen: imagen
 
         };
 
@@ -342,6 +480,8 @@ miApp.put("/api/productos/:id", (req, res) => {
         });
 
     } catch (error) {
+
+        console.error(error);
 
         res.status(500).json({
             mensaje: "Error al actualizar el producto"
@@ -383,6 +523,23 @@ miApp.delete("/api/productos/:id", (req, res) => {
             productos.splice(posicion, 1)[0];
 
 
+        // Eliminar la imagen del servidor, si tenía una
+
+        if (productoEliminado.imagen) {
+
+            const nombreImagen = path.basename(productoEliminado.imagen);
+
+            const rutaImagen = path.join(carpetaUploads, nombreImagen);
+
+            if (fs.existsSync(rutaImagen)) {
+
+                fs.unlinkSync(rutaImagen);
+
+            }
+
+        }
+
+
         guardarProductos(productos);
 
 
@@ -406,6 +563,34 @@ miApp.delete("/api/productos/:id", (req, res) => {
 
 
 // =====================================================
+// MANEJO DE ERRORES DE MULTER
+// =====================================================
+
+miApp.use((error, req, res, next) => {
+
+    if (error instanceof multer.MulterError) {
+
+        return res.status(400).json({
+            mensaje: "Error al subir la imagen",
+            error: error.message
+        });
+
+    }
+
+    if (error) {
+
+        return res.status(400).json({
+            mensaje: error.message
+        });
+
+    }
+
+    next();
+
+});
+
+
+// =====================================================
 // SERVIDOR
 // =====================================================
 
@@ -413,6 +598,10 @@ miApp.listen(miPuerto, () => {
 
     console.log(
         `SERVIDOR: http://localhost:${miPuerto}`
+    );
+
+    console.log(
+        `IMÁGENES: http://localhost:${miPuerto}/uploads`
     );
 
 });
