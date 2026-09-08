@@ -38,3 +38,11 @@ DELETE http://localhost:3030/api/productos/2
 ## Libreria multer 
 
 npm install multer
+
+Commonjs - tradicional 
+
+ESM - MODERNO 
+
+Typescript - tipo 
+
+## Middleware express
