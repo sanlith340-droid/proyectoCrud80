@@ -1,3 +1,42 @@
+## COMANDOS
+
+LISTA DE COMANDOS
+npm install express
+
+npm init -y
+
+npm run dev : para iniciar el servidor
+
+comandos de sguridad:
+
+git config --global --list
+
+//////
+
+git branch -r : ver ramas remotas git
+
+git fetch --all : actuliza el remoto
+
+git branch commonjs origin/commonjs
+
+git add .
+
+git commit -m "lista"
+
+///
+
+git checkout main
+
+git branch
+
+git checkout "commit"
+
+git checkout -b "" // crear rama
+
+git branch : ver ramas
+
+//
+
 ## PROYECTO CRUD 
 
 node --watch index.js 

@@ -5,7 +5,7 @@ const jwtoken = require ("jsonwebtoken")
 
 const autenticacionToken = (req , res , next )=>{
     //formato del token =Bearer <toke> 
-    const token = req.header("autenticacion").split("")[1]
+    const token = req.header("authent").split("")[1]
     if(!token){
         return res.status(401).json({mensaje: "Acesso denegado , no provee un token."})
         //401 no envia las crendiavlaes 
