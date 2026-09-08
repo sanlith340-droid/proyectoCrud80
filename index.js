@@ -4,6 +4,7 @@ const express = require("express");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
+const registroMiddleware  = require("./middleware/registroMiddleware") 
 
 const miApp = express();
 
@@ -13,6 +14,7 @@ const archivoProductos = "./datosProductos.json";
 
 // Middleware
 miApp.use(express.json());
+miApp.use(registroMiddleware);
 
 
 // =====================================================
