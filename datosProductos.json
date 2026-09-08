@@ -38,5 +38,13 @@
     "stock": 19,
     "categoria": "Comida",
     "imagen": "/uploads/1788872136113-434988999.jpg"
+  },
+  {
+    "id": 6,
+    "nombre": "Hamburguesa",
+    "precio": 25000,
+    "stock": 19,
+    "categoria": "Comida",
+    "imagen": "/uploads/1788873254687-952324497.jpg"
   }
 ]

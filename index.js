@@ -5,6 +5,8 @@ const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
 const registroMiddleware  = require("./middleware/registroMiddleware") 
+const manejadorErrores = require ("./middleware/manejadorErrores.js")
+const autenticacion = require ("./middleware/autenticacion.js")
 
 const miApp = express();
 
@@ -15,17 +17,16 @@ const archivoProductos = "./datosProductos.json";
 // Middleware
 miApp.use(express.json());
 miApp.use(registroMiddleware);
+miApp.use(autenticacion);
+
+//endpoint para autenticacion 
 
 
-// =====================================================
-// MIDDLEWARE DE LOGGING (imprime la hora de cada petición)
-// =====================================================
 
-miApp.use((req, res, next) => {
-    console.log(`Tiempo en milisegundos: ${Date.now()}`);
-    next();
+//endpoint para provocar un error
+miApp.get("/error", (req, res, next) => {
+    next(new Error("Error provocado, intencional"));
 });
-
 
 // =====================================================
 // CONFIGURACIÓN DE MULTER
@@ -565,31 +566,10 @@ miApp.delete("/api/productos/:id", (req, res) => {
 
 
 // =====================================================
-// MANEJO DE ERRORES DE MULTER
+// MANEJO DE ERRORES (SIEMPRE AL FINAL, DESPUÉS DE LAS RUTAS)
 // =====================================================
 
-miApp.use((error, req, res, next) => {
-
-    if (error instanceof multer.MulterError) {
-
-        return res.status(400).json({
-            mensaje: "Error al subir la imagen",
-            error: error.message
-        });
-
-    }
-
-    if (error) {
-
-        return res.status(400).json({
-            mensaje: error.message
-        });
-
-    }
-
-    next();
-
-});
+miApp.use(manejadorErrores);
 
 
 // =====================================================

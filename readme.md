@@ -257,3 +257,11 @@ module.exports = registroMiddleware
 
 
 
+## json web token jwt 
+
+npm install jsonwebtoken 
+
+npm install bcryptjs 
+
+
+Es una cadena firmada que confirma un usuario autenticado
