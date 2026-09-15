@@ -304,3 +304,6 @@ npm install bcryptjs
 
 
 Es una cadena firmada que confirma un usuario autenticado
+
+
+*prueba
