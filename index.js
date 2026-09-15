@@ -12,6 +12,8 @@ const usuariosRoutes = require("./src/routes/usuariosRoutes.js")
 const miApp = express();
 
 const miPuerto = process.env.MIPUERTO || 3333;
+//importar jsonwebtoken 
+const jswtoken = require("jsonwebtoken")
 
 const archivoProductos = "./datosProductos.json";
 
@@ -585,6 +587,47 @@ miApp.use(manejadorErrores);
 miApp.get("/rutaprotegida", autenticacion, (req, res) => {
     res.send("Ruta protegida")
 })
+
+*//endpoint inicio de sesion*
+
+miApp.post ("/login",(req,res)=>{
+
+
+//capturar datos del usuario* 
+
+const { correo , clave ,} = req.body;
+
+//simular datos del usuario de una bd* 
+
+const datoUsuario = {
+    correo: "Linaromano@gmail.com",
+    clave: "1234",
+    nombre: "Lina"
+};
+
+//validar datos de usuario* 
+
+if (correo !== datoUsuario.correo || clave !== datoUsuario.clave) {
+
+    return res.status(400).json({
+        Mensaje:"Credenciales incorrectas"
+    });
+
+}
+
+//generar y verificar* 
+
+const token = jswtoken.sign(
+    { correo: datoUsuario.correo },
+    process.env.JWT_SECRET,
+    { expiresIn: "1h" }
+);
+
+res.json(token);
+
+
+})
+
 
 miApp.listen(miPuerto, () => {
 
