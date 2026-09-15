@@ -580,6 +580,12 @@ miApp.use(manejadorErrores);
 // SERVIDOR
 // =====================================================
 
+//ruta protegida//
+
+miApp.get("/rutaprotegida", autenticacion, (req, res) => {
+    res.send("Ruta protegida")
+})
+
 miApp.listen(miPuerto, () => {
 
     console.log(

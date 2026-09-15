@@ -3,7 +3,7 @@ const jwtoken = require("jsonwebtoken");
 
 // =====================================================
 // MIDDLEWARE DE AUTENTICACIÓN
-// Formato esperado del encabezado: Authorization: Bearer <token>
+// Formato esperado: Authorization: Bearer <token>
 // =====================================================
 
 const autenticacionToken = (req, res, next) => {
@@ -13,12 +13,10 @@ const autenticacionToken = (req, res, next) => {
     if (!encabezado) {
         return res.status(401).json({
             mensaje: "Acceso denegado, no se proveyó un token."
-            // 401: no enviaste credenciales
-            // 403: enviaste credenciales pero no son válidas
         });
     }
 
-    // Soporta tanto "Bearer <token>" como el token solo
+    // Soporta "Bearer token" o token directo
     const partes = encabezado.split(" ");
     const token = partes.length === 2 ? partes[1] : partes[0];
 
@@ -31,14 +29,15 @@ const autenticacionToken = (req, res, next) => {
     jwtoken.verify(token, process.env.JWT_SECRET, (error, usuario) => {
 
         if (error) {
-            return res.status(403).json({ mensaje: "Token inválido" });
+            return res.status(403).json({
+                mensaje: "Token inválido"
+            });
         }
 
         req.aprendiz = usuario;
-        next(); // ahora next() solo se llama cuando el token es válido
 
+        next();
     });
-
 };
 
 module.exports = autenticacionToken;
