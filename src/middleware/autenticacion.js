@@ -1,26 +1,44 @@
-// importar libreria 
-const jwtoken = require ("jsonwebtoken")
+// importar libreria
+const jwtoken = require("jsonwebtoken");
 
-//funcion 
+// =====================================================
+// MIDDLEWARE DE AUTENTICACIÓN
+// Formato esperado del encabezado: Authorization: Bearer <token>
+// =====================================================
 
-const autenticacionToken = (req , res , next )=>{
-    //formato del token =Bearer <toke> 
-    const token = req.header("authent").split("")[1]
-    if(!token){
-        return res.status(401).json({mensaje: "Acesso denegado , no provee un token."})
-        //401 no envia las crendiavlaes 
-        //403 enviaste las credenciales pero no son validas 
+const autenticacionToken = (req, res, next) => {
+
+    const encabezado = req.header("Authorization");
+
+    if (!encabezado) {
+        return res.status(401).json({
+            mensaje: "Acceso denegado, no se proveyó un token."
+            // 401: no enviaste credenciales
+            // 403: enviaste credenciales pero no son válidas
+        });
     }
 
-    //verficar token 
+    // Soporta tanto "Bearer <token>" como el token solo
+    const partes = encabezado.split(" ");
+    const token = partes.length === 2 ? partes[1] : partes[0];
 
-    jwtoken.verify(token,process.env.JWT_SECRET, (error, usuario)=>{
-        if(error){
-            res.status(403).json({mensaje:"Token invaliudo"})
+    if (!token) {
+        return res.status(401).json({
+            mensaje: "Acceso denegado, no se proveyó un token."
+        });
+    }
+
+    jwtoken.verify(token, process.env.JWT_SECRET, (error, usuario) => {
+
+        if (error) {
+            return res.status(403).json({ mensaje: "Token inválido" });
         }
-        req.aprendiz = usuario 
-    } )
-    next()
-}
 
-module.exports = autenticacionToken
+        req.aprendiz = usuario;
+        next(); // ahora next() solo se llama cuando el token es válido
+
+    });
+
+};
+
+module.exports = autenticacionToken;

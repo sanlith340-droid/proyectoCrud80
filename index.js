@@ -4,9 +4,10 @@ const express = require("express");
 const fs = require("fs");
 const multer = require("multer");
 const path = require("path");
-const registroMiddleware  = require("./middleware/registroMiddleware") 
-const manejadorErrores = require ("./middleware/manejadorErrores.js")
-const autenticacion = require ("./middleware/autenticacion.js")
+const registroMiddleware  = require("./src/middleware/registroMiddleware")
+const manejadorErrores = require("./src/middleware/manejadorErrores.js")
+const autenticacion = require("./src/middleware/autenticacion.js")
+const usuariosRoutes = require("./src/routes/usuariosRoutes.js")
 
 const miApp = express();
 
@@ -17,9 +18,12 @@ const archivoProductos = "./datosProductos.json";
 // Middleware
 miApp.use(express.json());
 miApp.use(registroMiddleware);
-miApp.use(autenticacion);
 
-//endpoint para autenticacion 
+//endpoint para autenticacion (rutas públicas: no llevan el middleware de autenticación)
+miApp.use("/api/usuarios", usuariosRoutes);
+
+// A partir de aquí, todo lo que sea /api/productos requiere estar autenticado
+miApp.use("/api/productos", autenticacion);
 
 
 
