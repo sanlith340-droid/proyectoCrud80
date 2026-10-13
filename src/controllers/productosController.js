@@ -1,8 +1,12 @@
 const { Router } = require("express")
 
+const listar = require ("../models/productosModel")
+
 const listarProductos = async (req,res)=>{
     try {
         // obtener listado de pructos, utilizando el servicio
+        const productos = await listar
+        res.status(200).json(productos)
     } catch (error) {
         res.status(500).json({Error: error.message})
     }
