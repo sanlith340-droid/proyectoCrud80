@@ -1,14 +1,13 @@
 //consolida todos los enrutadores
 const { Router } = require("express");
 const usuariosRouter = require("./usuariosRoutes");
-const productosRouter = require("./productosRoutes");
-const autenticacionToken = require("../middleware/autenticacion");
+const productosRouter = require ("./productosRoutes")
+const { rutaProductos } = require("../config/db");
 const enrutador = Router();
 
 //enrutador
 enrutador.use("/usuarios", usuariosRouter);
-
-// Todo lo que sea /api/productos requiere estar autenticado (Authorization: Bearer <token>)
-enrutador.use("/productos", autenticacionToken, productosRouter);
+enrutador.use("/productos", productosRouter)
+//enrutador.use("/");
 
 module.exports = enrutador;

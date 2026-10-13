@@ -316,3 +316,33 @@ npm install -D @prisma/client@7
 npm install -D @prisma/adapter-pg@7
 
 npm install -D prisma@7 tsx 
+
+
+
+////
+
+
+POST http://localhost:3030/api/usuarios/registro
+
+json raw 
+
+
+{
+  "nombre": "Sena",
+  "email": "sena@gmail.com",
+  "password": "ClavePrueba123"
+}
+
+inicio de sesion: 
+
+POST http://localhost:3030/api/usuarios/login
+
+{
+  "nombre": "Sena",
+  "email": "sena@gmail.com",
+  "password": "ClavePrueba123"
+}
+
+token : eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJzZW5hQGdtYWlsLmNvbSIsIm5vbWJyZSI6IlNlbmEiLCJpYXQiOjE3OTE5MjAwMDIsImV4cCI6MTc5MTkyMzYwMn0.EV9LO8Xf3cziua3zdAO1GIWnIkPxeMrbLY-TemlM-y8
+
+
