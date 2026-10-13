@@ -22,8 +22,7 @@
     "type": "git"
   },
   "type": "commonjs",
-  "bugs": {
-  },
+  "bugs": {},
   "devDependencies": {
     "@prisma/client": "^7.10.0",
     "prisma": "^7.10.0",

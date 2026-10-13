@@ -308,7 +308,8 @@ Es una cadena firmada que confirma un usuario autenticado
 
 *prueba 2
 
-2s
+COMANDOS
+
 
 npm install -D prisma@7 
 
@@ -317,7 +318,15 @@ npm install -D @prisma/adapter-pg@7
 
 npm install -D prisma@7 tsx 
 
+npx prisma init --datasource-provider postgresql
+prism - extension 
 
+
+CREATE DATABASE "db3407180";
+
+\c db3407180
+
+ npx prisma migrate dev --name inicio 
 
 ////
 
