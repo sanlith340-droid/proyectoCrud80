@@ -309,3 +309,10 @@ Es una cadena firmada que confirma un usuario autenticado
 *prueba 2
 
 2s
+
+npm install -D prisma@7 
+
+npm install -D @prisma/client@7
+npm install -D @prisma/adapter-pg@7
+
+npm install -D prisma@7 tsx 

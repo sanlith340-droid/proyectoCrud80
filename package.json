@@ -28,6 +28,8 @@
   },
   "homepage": "https://github.com/sanlith340-droid/proyectoCrud80#readme",
   "devDependencies": {
-    "@prisma/client": "^7.10.0"
+    "@prisma/client": "^7.10.0",
+    "prisma": "^6.19.3",
+    "tsx": "^4.23.15"
   }
 }
